@@ -1,0 +1,10 @@
+<html>
+    <head>
+        <title>{% block title %}{{ wp.bloginfo('name') }}{% endblock %}</title>
+        {{ wp.wp_head() }}
+    </head>
+    <body>
+        {% block body %}{% endblock %}
+        {{ wp.wp_footer() }}
+    </body>
+</html>
