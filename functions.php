@@ -27,19 +27,23 @@ function fullsix_wordpress_theme_get_twig()
     return $container->get('twig');
 }
 
-function fullsix_wordpress_theme_process($name)
+function fullsix_wordpress_theme_process($name, $templ = null)
 {
     $data = fullsix_wordpress_theme_get_template_data($name);
-    $template = fullsix_wordpress_theme_get_twig()->loadTemplate(sprintf(get_theme_mod('fullsix_wordpress_theme_templates_path'), $name));
+    $template = fullsix_wordpress_theme_get_twig()->loadTemplate(sprintf(get_theme_mod('fullsix_wordpress_theme_templates_path'), $templ ?: $name));
     $template->display($data);
 }
 
 function fullsix_wordpress_theme_get_template_data($template)
 {
     global $response;
-    $data = array();
+    $data = array("_template" => $template);
     if ($response instanceof WordPressResponse) {
-        $data = $response->getParams();
+        $data = array_merge($data, $response->getParams());
     }
-    return apply_filters('fullsix_wordpress_theme_template_data', $data);
+    $data = array_merge($data, apply_filters('fullsix_wordpress_theme_template_data', $data));
+    if ($response instanceof WordPressResponse) {
+        $response->setParams($data);
+    }
+    return $data;
 }
